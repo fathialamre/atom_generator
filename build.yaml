@@ -1,0 +1,23 @@
+builders:
+  atom_repository_generator:
+    import: "package:atom_generator/src/builder.dart"
+    builder_factories: [ "atomRepositoryGenerator" ]
+    build_extensions: { ".dart": [ ".repo.dart" ] }
+    auto_apply: dependents
+    build_to: source
+
+  atom_routes_generator:
+    import: "package:atom_generator/src/builder.dart"
+    builder_factories: [ "atomRoutesBuilder" ]
+    build_extensions: { ".dart": [ "app_routes.dart" ] }
+    auto_apply: dependents
+    build_to: source
+    required_inputs: [ ".routes.json" ]
+
+  atom_route_scanner:
+    import: "package:atom_generator/src/builder.dart"
+    builder_factories: [ "atomRouteScanner" ]
+    build_extensions: { ".dart": [ ".routes.json" ] }
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: [ "atom_generator|atom_routes_generator" ]
