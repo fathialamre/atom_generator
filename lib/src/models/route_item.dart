@@ -8,6 +8,7 @@ class RouteItem {
   String className;
   List<RouteParams> routeParams;
   List<RouteDependency> dependencies;
+  List<dynamic> middlewares;
 
   RouteItem({
     this.routeName = '',
@@ -16,6 +17,7 @@ class RouteItem {
     this.initialRoute = false,
     this.routeParams = const [],
     this.dependencies = const [],
+    this.middlewares = const [],
   });
 
 // fromJson: Create an instance from a JSON map
@@ -32,6 +34,7 @@ class RouteItem {
       dependencies: (json['dependencies'] as List<dynamic>)
           .map((e) => RouteDependency.fromJson(e as Map<String, dynamic>))
           .toList(),
+      middlewares: json['middlewares'].map((e) => e as String).toList(),
     );
   }
 
@@ -44,6 +47,7 @@ class RouteItem {
       'className': className,
       'routeParams': routeParams.map((e) => e.toJson()).toList(),
       'dependencies': dependencies.map((e) => e.toJson()).toList(),
+      'middlewares': middlewares.map((e) => e.toString()).toList(),
     };
   }
 

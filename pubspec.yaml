@@ -10,9 +10,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-#  atom_annotations: ^0.0.2
+  #    path: ../atom_annotations
   atom_annotations:
-    path: ../atom_annotations
+    git:
+      url: https://github.com/fathialamre/atom_annotations
+      ref: main
   dart_style: ^2.0.0
   code_builder: ^4.10.0
   analyzer: ^5.1.0

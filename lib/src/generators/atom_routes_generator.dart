@@ -40,6 +40,9 @@ class AtomRoutesGenerator extends Builder {
           refer('GetPage')
               .newInstance([], {
                 'name': refer('routePath'),
+                'middlewares': literalList(
+                  routeItem.middlewares.map((e) => refer('$e()').code).toList(),
+                ),
                 'page': Method(
                   (m) => m
                     ..lambda = true

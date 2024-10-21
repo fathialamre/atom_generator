@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:atom_annotations/atom_annotations.dart';
 import 'package:atom_generator/src/models/route_dependency.dart';
 import 'package:atom_generator/src/models/route_item.dart';
@@ -31,7 +33,6 @@ class AtomRouteScanner extends Builder {
     }
   }
 
-
   @override
   FutureOr<void> build(BuildStep buildStep) async {
     if (!await buildStep.resolver.isLibrary(buildStep.inputId)) return;
@@ -55,7 +56,26 @@ class AtomRouteScanner extends Builder {
         final bool initialRoute =
             screenAnnotation.read("initialRoute").boolValue;
 
+        List<DartObject> middlewares = [];
+        if (screenAnnotation.read("middlewares").runtimeType.toString() !=
+            '_NullConstant') {
+          middlewares = screenAnnotation.read("middlewares").listValue;
+        }
+
+        final List<String> middlewareNames = [];
+
         Set<String> imports = {};
+
+        if (middlewares.isNotEmpty) {
+          for (var e in middlewares) {
+            DartType? element = e.toTypeValue();
+
+            middlewareNames.add(element?.element?.name ?? '');
+            imports.add(
+              "${element?.element?.librarySource?.uri.toString()}",
+            );
+          }
+        }
 
         List<RouteParams> routeParams = resolveClassParams(
           classElement: classElement,
@@ -83,11 +103,8 @@ class AtomRouteScanner extends Builder {
           routeParams: routeParams,
           className: classElement.name,
           dependencies: pageDependencies,
+          middlewares: middlewareNames.map((e) => e.toString()).toList(),
         );
-
-        print('============ITEMS');
-        print(item.toJson());
-        print('============ITEMS');
 
         buildStep.writeAsString(
           buildStep.inputId.changeExtension(
